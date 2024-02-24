@@ -1,5 +1,6 @@
 # Prerequisites
 *.d
+compile_commands.json
 
 # Object files
 *.o
@@ -37,6 +38,7 @@
 *.hex
 
 # Debug files
+.cache/
 *.dSYM/
 *.su
 *.idb
