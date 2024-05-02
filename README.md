@@ -13,3 +13,6 @@
 #### Documentation :
 
 This section is for explaining command line arguments USAGE
+#### Breaking changes:
+- mybe this source code will be moved from (c+make+sdl2) to (cpp+Cmake+sdl2)
+- this changes will happen soon ...
