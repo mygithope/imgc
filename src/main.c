@@ -1,76 +1,44 @@
-#include "SDL_render.h"
-#include "SDL_timer.h"
-#include "SDL_video.h"
-#include <SDL.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <gtk/gtk.h>
 
-#define WINDOW_TITLE "imgc"
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 800
-
-struct App
+static void
+print_hello (GtkWidget *widget, gpointer data)
 {
-  SDL_Window *window;
-  SDL_Renderer *renderer;
-};
-
-bool sdl_intializer (struct App *imgc);
-void app_cleanup (struct App *imgc);
-int
-main ()
-{
-
-  struct App imgc = {
-    .window = NULL,
-    .renderer = NULL,
-  };
-  if (!sdl_intializer (&imgc))
-    {
-      app_cleanup (&imgc);
-      printf ("Bad\n");
-      exit (1);
-    }
-  SDL_RenderClear (imgc.renderer);
-  SDL_RenderPresent (imgc.renderer);
-  SDL_Delay (5000);
-  app_cleanup (&imgc);
-  printf ("Good\n");
-  return 0;
+  g_print ("Hello World\n");
 }
-/*kill sdl2*/
-void
-app_cleanup (struct App *imgc)
+
+static void
+activate (GtkApplication *app, gpointer user_data)
 {
-  SDL_DestroyRenderer (imgc->renderer);
-  SDL_DestroyWindow (imgc->window);
-  SDL_Quit ();
-};
-/*Return false if there is an Error
- * and false if it just Works*/
-bool
-sdl_intializer (struct App *imgc)
+  GtkWidget *window;
+  GtkWidget *button;
+  GtkWidget *button_box;
+
+  window = gtk_application_window_new (app);
+  gtk_window_set_title (GTK_WINDOW (window), "Window");
+  gtk_window_set_default_size (GTK_WINDOW (window), 200, 200);
+
+  button_box = gtk_button_box_new (GTK_ORIENTATION_HORIZONTAL);
+  gtk_container_add (GTK_CONTAINER (window), button_box);
+
+  button = gtk_button_new_with_label ("Hello World");
+  g_signal_connect (button, "clicked", G_CALLBACK (print_hello), NULL);
+  g_signal_connect_swapped (button, "clicked", G_CALLBACK (gtk_widget_destroy),
+                            window);
+  gtk_container_add (GTK_CONTAINER (button_box), button);
+
+  gtk_widget_show_all (window);
+}
+
+int
+main (int argc, char **argv)
 {
-  /* replace with needed sdl inits*/
-  if (SDL_Init (SDL_INIT_EVERYTHING))
-    {
-      fprintf (stderr, "INIT Error : %s\n", SDL_GetError ());
-      return false;
-    }
-  imgc->window = SDL_CreateWindow (WINDOW_TITLE, SDL_WINDOWPOS_CENTERED,
-                                   SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH,
-                                   SCREEN_HEIGHT, 0);
-  if (!imgc->window)
-    {
-      fprintf (stderr, "WINDOW Error : %s\n", SDL_GetError ());
-      return false;
-    }
-  imgc->renderer = SDL_CreateRenderer (imgc->window, -1, 0);
-  if (!imgc->renderer)
-    {
-      fprintf (stderr, "RENDERER Error : %s\n", SDL_GetError ());
-      return false;
-    }
-  return true;
+  GtkApplication *app;
+  int status;
+
+  app = gtk_application_new ("org.gtk.example", G_APPLICATION_DEFAULT_FLAGS);
+  g_signal_connect (app, "activate", G_CALLBACK (activate), NULL);
+  status = g_application_run (G_APPLICATION (app), argc, argv);
+  g_object_unref (app);
+
+  return status;
 }
