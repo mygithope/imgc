@@ -18,7 +18,7 @@ this project support (Linux only / maybe will be ported to other platforms)
 #### TODO :
 
 - i will do anything related to graphics (image manuplation / graphs)
-- (soon...)
+- searching for an image manuplation lib
 
 #### Documentation :
 
